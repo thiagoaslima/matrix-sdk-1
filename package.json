@@ -3,18 +3,28 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev  -p 3001",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^1.6.2",
+    "cookies": "^0.8.0",
+    "jsonwebtoken": "^8.5.1",
+    "matrix-js-sdk": "^13.0.0",
     "next": "11.1.2",
     "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "react-dom": "17.0.2",
+    "react-redux": "^7.2.5",
+    "reduce-reducers": "^1.0.4",
+    "redux-saga": "^1.1.3"
   },
   "devDependencies": {
+    "@types/cookies": "^0.7.7",
+    "@types/jsonwebtoken": "^8.5.5",
     "eslint": "7.32.0",
-    "eslint-config-next": "11.1.2"
+    "eslint-config-next": "11.1.2",
+    "exports-loader": "^3.0.0"
   }
 }
