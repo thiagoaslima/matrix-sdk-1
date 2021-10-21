@@ -1,8 +1,5 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
-import { logoutFulfilled } from '../sagas/auth/logout';
-import { startFulfilled, startRejected } from '../sagas/auth/start';
-import { loginFulfilled, loginRejected, MatrixAuthData } from '../sagas/auth/login';
 
 type AuthenticatedChatState = {
   userId: string;
@@ -19,33 +16,20 @@ export const authSlice = createSlice({
   name: 'chat/auth',
   initialState: authInitialState as AuthState,
   reducers: {
-    authenticate(state, action: PayloadAction<MatrixAuthData>) {
+    authenticate(state, action: PayloadAction<any>) {
       authenticateChatClient(state, action);
     },
     deauthenticate(_state, _action) {
       return deauthenticateChatClient();
     }
   },
-  extraReducers: (builder) => {
-    builder
-    // Login
-    .addCase(loginFulfilled, authenticateChatClient)
-    .addCase(loginRejected, deauthenticateChatClient)
-
-    // Logout
-    .addCase(logoutFulfilled, deauthenticateChatClient)
-    
-    // Start
-    .addCase(startFulfilled, startChatClient)
-    .addCase(startRejected, deauthenticateChatClient)
-  }
 });
 
 export const { authenticate, deauthenticate } = authSlice.actions;
 
 export default authSlice.reducer;
 
-function authenticateChatClient<T extends MatrixAuthData = MatrixAuthData>(state: AuthState, { payload }: { payload: T}) {
+function authenticateChatClient(state: AuthState, { payload }: { payload: any}) {
   state.logged = true;
   state.ready = false;
   Object.assign(state, payload);

@@ -1,26 +1,25 @@
 import { useCallback, MouseEvent, useEffect } from 'react';
 
-import { useAppSelector, useAppDispatch } from '../../../../app/store/hooks';
-import { selectChatRooms, selectChatRoomsState } from '../../store/index';
-import { ChatRoom, setCurrentRoom } from '../../store/rooms';
+import { useAppSelector, useAppDispatch } from '../../../../app/store-v2/hooks';
+import { Room } from '../../types/room';
 
 import styles from './rooms-list.module.css'
-import { matrixClient } from '../../services/client';
 
-const RoomsListItem = ({ room }: { room: ChatRoom }) => {
+const RoomsListItem = ({ room }: { room: Room }) => {
   return (
-    <li className={styles.listItem} id={room.roomId}>{room.name || room.canonicalAlias || room.roomId }</li>
+    <li className={styles.listItem} id={room.id}>{room.name || room.canonicalAlias || room.id }</li>
   )
 }
 
-const RoomsListUI = (props: { rooms: ChatRoom[], onClick: (event: MouseEvent) => void }) => {
+const RoomsListUI = (props: { open?: boolean; rooms: Room[], summary: string, onClick: (event: MouseEvent) => void }) => {
+  const open = props.open ? { open: true } : {}
   return (
-    <details open>
-      <summary>Public Rooms</summary>
+    <details {...open}>
+      <summary>{ props.summary }</summary>
       <ul className={styles.list} onClick={props.onClick}>
         {
           props.rooms.map(room => (
-            <RoomsListItem key={room.roomId} room={room} />
+            <RoomsListItem key={room.id} room={room} />
           ))
         }
       </ul>
@@ -30,9 +29,12 @@ const RoomsListUI = (props: { rooms: ChatRoom[], onClick: (event: MouseEvent) =>
 
 export const RoomsList = () => {
   const dispatch = useAppDispatch();
-  const chatRooms = useAppSelector(selectChatRooms.selectAll);
-  const chatState = useAppSelector(selectChatRoomsState);
-  const currentRoom = chatState.currentRoom;
+  const chatRooms = useAppSelector(state => {
+    return Array.from(state.chat.rooms.available).map(id => state.chat.rooms.entities[id]).sort((a, b) => a.name.localeCompare(b.name))
+  });
+  const joinedRooms = useAppSelector(state => {
+    return Array.from(state.chat.rooms.joined).map(id => state.chat.rooms.entities[id]).sort((a, b) => a.name.localeCompare(b.name))
+  });
 
   const handleClick = useCallback((event: MouseEvent) => {
     const element = event.target;
@@ -44,12 +46,15 @@ export const RoomsList = () => {
     const targetId = (element as HTMLElement).id;
 
     if (targetId) {
-      dispatch(setCurrentRoom({ roomId: targetId }));
+      // dispatch(setCurrentRoom({ roomId: targetId }));
     }
-  }, [dispatch]);
+  }, []);
 
   return (
-    <RoomsListUI rooms={chatRooms} onClick={handleClick} />
+    <>
+    <RoomsListUI open rooms={joinedRooms} onClick={handleClick} summary="Joined rooms" />
+    <RoomsListUI rooms={chatRooms} onClick={handleClick} summary="Other rooms" />
+    </>
   )
 }
 

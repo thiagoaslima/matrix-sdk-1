@@ -1,1 +1,2 @@
-export type timestampMS = number;
+export type timestampMs = number;
+export type elapsedTimeMs = number;

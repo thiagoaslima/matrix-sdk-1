@@ -1,7 +1,5 @@
-import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { User } from 'matrix-js-sdk';
-import { logoutFulfilled } from '../sagas/auth/logout';
-import { getUserFulfilled, SerializableUser } from '../sagas/user/get-user';
+import { createSlice } from '@reduxjs/toolkit';
+import { SerializableUser } from '../sagas/user/get-user';
 
 export type ChatUserState = { 
   id: string;
@@ -24,11 +22,6 @@ export const userSlice = createSlice({
     resetUser(_state, _action) {
       return reset();
     }
-  },
-  extraReducers: (builder) => {
-    builder
-    .addCase(getUserFulfilled, setUser)
-    .addCase(logoutFulfilled, reset)
   }
 });
 

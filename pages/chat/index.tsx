@@ -16,7 +16,7 @@ const ChatPage: NextPage = () => {
         <RoomsList />
       </div>
       <div className={styles.chatText}>
-        <CurrentRoom />
+        {/* <CurrentRoom /> */}
       </div>
     </div>
     <div className={styles.chatFooter}>

@@ -1,57 +1,34 @@
-import { createAction } from '@reduxjs/toolkit';
-import { call, put, takeLatest } from '@redux-saga/core/effects';
+import { all, call, put, takeLatest } from 'redux-saga/effects';
+import * as authService from '../../services/auth/auth.service';
+import { actions } from '../../store/v2/index';
+import { chatClient } from '../../services/client-sdk/client';
+import { User } from '../../types/user';
+import { Device } from '../../types/device';
 
-import { InternalAPI } from '../../../../lib/internal-api';
-import { LoginResponse } from '../../../../pages/api/chat/login';
-import { logoutRejected } from './logout';
-
-export type MatrixAuthData = {
-  userId: string;
-  deviceId: string;
-  accessToken: string;
-  homeServerDomain: string;
-}
-
-export const adaptLoginResponse = (loginData: LoginResponse): MatrixAuthData => ({
-  userId: loginData['user_id'],
-  deviceId: loginData['device_id'],
-  accessToken: loginData['access_token'],
-  homeServerDomain: loginData['home_server']
-});
-
-export const login = createAction<{ userId: string }>('chat/auth/login');
-export const loginFulfilled = createAction<MatrixAuthData>('chat/auth/login/fulfilled');
-export const loginRejected = createAction<{ error: unknown }>('chat/auth/login/rejected');
-
-async function makeLogin(userId: string): Promise<MatrixAuthData> {
-  const url = InternalAPI.url('/chat/login');
-  
-  const loginResponse = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ userId })
-  });
-
-  const loginData: LoginResponse = await loginResponse.json();
-  
-  if (loginResponse.status === 200) {  
-    return adaptLoginResponse(loginData);
-  } else {
-    console.error(loginData)
-    throw new Error('Unable to login');
-  }
-}
-
-function* loginSaga({ payload }: ReturnType<typeof login>) {
+function* loginSaga({ payload }: { payload: { userId: string }}) {
   try {
-    const authData: MatrixAuthData = yield call(makeLogin, payload.userId);
-    yield put(loginFulfilled(authData))
+    const loginResponse: authService.LoginResponse = yield call(authService.login, payload.userId);
+    yield chatClient.authenticate(loginResponse);
+    
+    yield put(actions.loginSuccess({ token: loginResponse.accessToken }))
   } catch(error) {
-    yield put(loginRejected({ error }))
-    yield put(logoutRejected({ error }))
+    yield put(actions.loginFailed())
   }
+}
+
+function* startSaga() {
+  const [_, user, device]: [true, User, Device] = yield all([
+    call(chatClient.syncState.bind(chatClient)),
+    call(chatClient.getUserProfile.bind(chatClient)),
+    call(chatClient.getDevice.bind(chatClient)),
+  ])
+
+  yield put(actions.ready({ user, device }))
 }
 
 export function* watchLogin() {
-  yield takeLatest(login, loginSaga)
+  yield all([
+    takeLatest(actions.login, loginSaga),
+    takeLatest(actions.loginSuccess, startSaga)
+  ]);
 }

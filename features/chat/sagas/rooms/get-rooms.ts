@@ -1,50 +1,40 @@
-import { createAction } from '@reduxjs/toolkit';
-import { all, put, takeEvery } from '@redux-saga/core/effects';
-import { Room } from 'matrix-js-sdk';
+import { call, put, takeEvery } from 'redux-saga/effects';
 
-import { matrixClient } from '../../services/client';
-import { startFulfilled } from '../auth/start';
-import { ChatRoom } from '../../store/rooms';
-import { addMessages } from '../../store/messages';
+import { actions } from '../../store/v2';
+import { chatClient } from '../../services/client-sdk/client';
+import { Room } from '../../types/room';
 
-export const getRooms = createAction('chat/rooms/get-rooms');
-export const getRoomsFulfilled = createAction<Omit<ChatRoom, 'members' | 'messages'>[]>('chat/rooms/get-rooms/fulfilled');
-export const getRoomsRejected = createAction<{ error: unknown }>('chat/rooms/get-rooms/rejected');
 
-const toChatRoom = (room: Room): Omit<ChatRoom, 'members' | 'messages'> => {
-  const chatRoom: Omit<ChatRoom, 'members' | 'messages'> = {
-    roomId: room.roomId,
-    name: room.name,
-    canonicalAlias: room.getCanonicalAlias(),
-    joinRule: room.getJoinRule(),
-    joinedMembersTotal: room.getJoinedMemberCount()
-  }
+function* getRoomsSaga() {
+  const response: {
+    rooms: Room[];
+    nextBatch?: string;
+    previousBatch?: string;
+    totalRooms?: number;
+  } = yield call(chatClient.getAllRooms.bind(chatClient));
+  const joinedRooms: Room[] = yield call(chatClient.getJoinedRooms.bind(chatClient));
 
-  return chatRoom;
+
+  yield put(actions.addRooms(response))
+  yield put(actions.addJoinedRooms({ rooms: joinedRooms }))
+  // const allMessages = rooms.map(room => {
+
+  //   return room.getLiveTimeline().getEvents().reduce((acc, event) => {
+  //     if (event.event.type === 'm.room.message') {
+  //       acc.push(event.event);
+  //     }
+  //     return acc;
+  //   }, [] as any[]);
+  // }).filter(arr => arr.length > 0);
+
+
+  // yield all([
+  //   put(getRoomsFulfilled(rooms.map(toChatRoom))),
+  //   ...allMessages.map(messages => put(addMessages(messages)))
+  // ])
 }
 
-function* handleRoomsSaga() {
-    const rooms = matrixClient.getRooms();
-
-    const allMessages = rooms.map(room => {
-
-      return room.getLiveTimeline().getEvents().reduce((acc, event) => {
-        if (event.event.type === 'm.room.message') {
-          acc.push(event.event);
-        }
-        return acc;
-      }, [] as any[]);
-    }).filter(arr => arr.length > 0);
-
-    
-    yield all([
-      put(getRoomsFulfilled(rooms.map(toChatRoom))),
-      ...allMessages.map(messages => put(addMessages(messages)))
-    ])
-    
-}
-
-export function* watchGetRooms() {
-  yield takeEvery(startFulfilled, handleRoomsSaga);
+export function* watchReadyState() {
+  yield takeEvery(actions.ready, getRoomsSaga)
 }
 
