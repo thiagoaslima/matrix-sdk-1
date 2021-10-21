@@ -1,4 +1,6 @@
 import { timestampMs } from './common';
+import { MessageContent } from './message';
+
 export interface Room {
   id: string;
   name: string;
@@ -8,9 +10,6 @@ export interface Room {
     list: RoomMember[],
     total: number,
   }
-  events?: {
-    all: RoomEvent[];
-  }
 }
 
 export interface RoomMember {
@@ -18,10 +17,10 @@ export interface RoomMember {
   name: string;
 }
 
-export interface RoomEvent {
+export interface RoomEvent<TContent extends MessageContent = any> {
   id: string
   type: string;
-  content: any;
+  content: TContent;
   roomId: string;
   sender: string;
   serverTimestamp: timestampMs;

@@ -1,4 +1,4 @@
-import { elapseTimeMs } from './common';
+import { elapsedTimeMs } from './common';
 
 export enum PresenceEnum {
   online = "online",

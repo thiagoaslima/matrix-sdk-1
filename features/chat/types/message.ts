@@ -1,5 +1,5 @@
 // Adapted from https://matrix.org/docs/spec/client_server/latest#m-room-message-msgtypes
-enum MessageTypeEnum {
+export enum MessageTypeEnum {
   audio = 'm.audio',
   emote = 'm.emote',
   file = 'm.file',
@@ -10,7 +10,7 @@ enum MessageTypeEnum {
   video = 'm.video',
 }
 
-type MessageContent =
+export type MessageContent =
   | TextMessage
   | EmoteMessage
   | NoticeMessage
@@ -39,7 +39,7 @@ export interface TextMessage extends BaseMessage {
   /** The format used in the formattedBody. Currently only org.matrix.custom.html is supported. */
   format: string;
   /** The formatted version of the body. This is required if format is specified. */
-  formattedBody: string;
+  formatted_body: string;
 }
 
 /**
@@ -260,6 +260,8 @@ export interface VideoMesssage extends BaseMessage {
 // ----------------------------- //
 //        ADDITIONAL TYPES       //
 // ----------------------------- //
+interface AudioInfo {}
+
 interface ImageInfo {
   /**
    * The intended display height of the image in pixels. 
@@ -300,7 +302,7 @@ interface FileInfo {
   /** The mimetype of the file e.g. application/msword. */
   mimetype: string;
   /** The size of the file in bytes. */
-  size: integer;
+  size: number;
   /** The URL to the thumbnail of the file. Only present if the thumbnail is unencrypted. */
   thumbnail_url: string;
   /** Information on the encrypted thumbnail file, as specified in End-to-end encryption. Only present if the thumbnail is encrypted. */
@@ -321,13 +323,13 @@ interface ThumbnailInfo {
    * The intended display width of the image in pixels. 
    * This may differ from the intrinsic dimensions of the image file.
    */
-  w: integer;
+  w: number;
 
   /** The mimetype of the image, e.g. image/jpeg. */
   mimetype: string;
 
   /** Size of the image in bytes. */
-  size: integer;
+  size: number;
 }
 
 interface LocationInfo {

@@ -1,6 +1,4 @@
 import { InternalAPI } from "../../../../lib/internal-api";
-import { getEnv } from '../../../../lib/get-env';
-import { chatClient } from '../client-sdk/client';
 
 export type LoginRawResponse = {
   "user_id": string;

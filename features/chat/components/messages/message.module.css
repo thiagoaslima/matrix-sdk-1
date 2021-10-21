@@ -1,0 +1,29 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  overflow: auto;
+  padding-bottom: 10px;
+}
+
+.chatMessage {
+  display: block;
+  border: 1px solid lightgrey;
+  background-color: #ddd;
+  border-radius: 0 10px 10px 10px;
+  padding: 5px 15px;
+  margin-bottom: 20px;
+  width: auto;
+  max-width: 80%;
+  align-self: flex-start;
+}
+
+.ownMessage {
+  border-radius: 10px 0 10px 10px;
+  align-self: flex-end;
+  background-color: aquamarine;
+}
+
+.sender {
+  font-size: 12px;
+}

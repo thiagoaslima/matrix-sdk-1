@@ -1,3 +1,4 @@
+import { TextMessage } from './message';
 //Adapted from https://matrix.org/docs/spec/client_server/latest#events
 
 export interface ChatEvent<Content = unknown> {
@@ -13,7 +14,7 @@ export interface ChatEvent<Content = unknown> {
    type: string;
 }
 
-export interface ChatMessageEvent extends ChatEvent<MessageContent> {
+export interface ChatMessageEvent extends ChatEvent {
   type: "m.room.message";
   /**
    * The globally unique event identifier.

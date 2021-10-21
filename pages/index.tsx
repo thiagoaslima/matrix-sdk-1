@@ -1,6 +1,6 @@
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, } from 'react';
 import Loader from "react-loader-spinner";
 
 import { getBrowserEnv } from '../lib/get-env';

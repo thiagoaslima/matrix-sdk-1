@@ -4,6 +4,7 @@ import { useAppSelector, useAppDispatch } from '../../../../app/store-v2/hooks';
 import { Room } from '../../types/room';
 
 import styles from './rooms-list.module.css'
+import { actions } from '../../store/v2/index';
 
 const RoomsListItem = ({ room }: { room: Room }) => {
   return (
@@ -46,9 +47,9 @@ export const RoomsList = () => {
     const targetId = (element as HTMLElement).id;
 
     if (targetId) {
-      // dispatch(setCurrentRoom({ roomId: targetId }));
+      dispatch(actions.selectRoom({ roomId: targetId }));
     }
-  }, []);
+  }, [dispatch]);
 
   return (
     <>

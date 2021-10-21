@@ -20,6 +20,22 @@ export class ChatClientSDK {
 
   private _client: MatrixClient = createClient(this.clientSettings);
 
+  /**
+   * @deprecated
+   * @todo Remove
+   */
+  getSDK() {
+    return this._client
+  }
+
+  /**
+   * @deprecated
+   * @todo Remove
+   */
+  getAccessToken() {
+    return this._client.getAccessToken();
+  }
+
   async authenticate({
     accessToken,
     deviceId,
@@ -99,18 +115,6 @@ export class ChatClientSDK {
         })),
         total: room.getJoinedMemberCount(),
       },
-      events: {
-        all: room.timeline.map(event => {
-          return {
-            id: event.event.event_id,
-            type: event.event.type,
-            content: event.event.content,
-            roomId: event.event.room_id,
-            sender: event.event.sender,
-            serverTimestamp: event.event.origin_server_ts,
-          }
-        })
-      }
     }));
 
     return rooms;
