@@ -8,6 +8,6 @@ export class InternalAPI {
       throw new Error(`Path parameter must start with a /`);
     }
     
-    return `${hostname}/api${path}`;
+    return `/api${path}`;
   }
 }
