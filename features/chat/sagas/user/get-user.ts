@@ -1,8 +1,8 @@
 import { createAction } from '@reduxjs/toolkit';
-import { all, put, takeEvery } from '@redux-saga/core/effects';
+import { put } from '@redux-saga/core/effects';
 import { User } from 'matrix-js-sdk';
 
-import { matrixClient } from '../../services/client';
+import { matrixClient } from '../../services/old-client';
 
 export const getUser = createAction('chat/user/get-user');
 export const getUserFulfilled = createAction<SerializableUser>('chat/user/get-user/fulfilled');

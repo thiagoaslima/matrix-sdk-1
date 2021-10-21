@@ -19,7 +19,7 @@ export type ChatMessage = {
 
 const fromEventToChatMessage = (event: ChatMessageEvent): ChatMessage => {
   return {
-    message: event.content,
+    message: event.content as any,
     timestamp: event.origin_server_ts,
     eventId: event.event_id,
     roomId: event.room_id,

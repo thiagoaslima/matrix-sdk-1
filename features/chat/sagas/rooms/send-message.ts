@@ -1,16 +1,10 @@
-import { eventChannel } from 'redux-saga'
-import { put, all, take, race, select, call, takeEvery } from 'redux-saga/effects';
-import { matrixClient } from "../../services/client";
-import { deauthenticate } from '../../store/auth';
-import { addMessage } from '../../store/messages';
-import { setCurrentRoom } from "../../store/rooms";
-import { ChatMessageEvent } from '../../types/events';
-import { actions, ChatState } from '../../store/v2/index';
+import { put, select, call, takeEvery } from 'redux-saga/effects';
+import { ISendEventResponse } from 'matrix-js-sdk/lib/@types/requests';
+
+import { actions,  } from '../../store/v2/index';
 import { chatClient } from '../../services/client-sdk/client';
 import { MessageContent } from '../../types/message';
-import { RoomEvent } from '../../types/room';
 import { RootState } from '../../../../app/store-v2';
-import { ISendEventResponse } from 'matrix-js-sdk/lib/@types/requests';
 
 type RawEvent = {
   content: MessageContent,
@@ -30,15 +24,6 @@ type InitialSyncResponse = {
     end: string;
   }
 }
-
-const convertEvent = (item: RawEvent) => ({
-  id: item.event_id,
-  type: item.type,
-  content: item.content,
-  roomId: item.room_id,
-  sender: item.sender,
-  serverTimestamp: item.origin_server_ts
-})
 
 let tempId = 0;
 const getTempId = () => `temp-event-${+tempId}`

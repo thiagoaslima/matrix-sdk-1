@@ -1,7 +1,6 @@
 import { createClient, MatrixClient } from "matrix-js-sdk";
 import { SyncState } from "matrix-js-sdk/lib/sync.api";
 import { getEnv } from '../../../lib/get-env';
-import { MatrixAuthData } from "../sagas/auth/login";
 
 const BASE_SETTINGS = {
   baseUrl: getEnv().matrixServerUrl,
@@ -20,7 +19,7 @@ class Client {
     return this._client;
   }
 
-  authenticate(authData: Pick<MatrixAuthData, 'accessToken' | 'deviceId' | 'userId'>): MatrixClient {
+  authenticate(authData: Pick<any, 'accessToken' | 'deviceId' | 'userId'>): MatrixClient {
     try {
       this.stop();
   
