@@ -7,6 +7,10 @@ export class InternalAPI {
     if (!path.startsWith('/')) {
       throw new Error(`Path parameter must start with a /`);
     }
+
+    if (hostname.includes('vercel.app')) {
+      return `/api${path}`
+    }
     
     return `${hostname}/api${path}`;
   }
