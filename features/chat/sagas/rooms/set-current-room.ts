@@ -1,6 +1,6 @@
 import { eventChannel } from 'redux-saga'
 import { put, all, take, race, select, call, takeEvery } from 'redux-saga/effects';
-import { matrixClient } from "../../services/client";
+import { matrixClient } from "../../services/old-client";
 import { deauthenticate } from '../../store/auth';
 import { addMessage } from '../../store/messages';
 import { setCurrentRoom } from "../../store/rooms";
